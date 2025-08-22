@@ -1,0 +1,74 @@
+pipeline {
+    agent {
+        label 'AGENT-1'
+    }
+
+    options {
+        timeout(time:30, unit:'MINUTES') // set a timeout of 30 minutes for the entire pipeline
+        disableConcurrentBuilds() // disable concurrent builds, only one build can run at a time
+    }
+
+    environment {
+        appVersion = ''
+        ACC_ID = '057260092371'
+        REGION = 'us-east-1'
+        PROJECT = 'roboshop'
+        COMPONENT = 'cataloguee'
+    }
+
+    stages {
+        
+         stage('init') { // stage to initialize terraform
+            steps {
+                script {
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 00-vpc
+                           terraform init -reconfigure
+
+                           """
+                    }
+                }
+            }
+        }
+
+        stage('plan') { // stage to initialize terraform
+            steps {
+                script {
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 00-vpc
+                           terraform plan
+
+                           """
+                    }
+                }
+            }
+        }
+
+        stage('apply') { // stage to initialize terraform
+            input {
+                    message "Should we continue?"
+                    ok "Yes, we should."
+                    submitter "viswesh bonam"
+                    
+            }
+            steps {
+                script {
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 00-vpc
+                           terraform apply -auto-approve
+
+                           """
+                    }
+                }
+            }
+        }
+
+
+    }
+}
