@@ -63,7 +63,8 @@ pipeline {
                     steps {
                         script {
                             build job: '20-bastion',
-                            propagate: false
+                            propagate: false,
+                            wait: false
                         }
                     }
                 }
