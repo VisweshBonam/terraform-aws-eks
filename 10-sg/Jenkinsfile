@@ -68,11 +68,21 @@ pipeline {
                         }
                     }
                 }
+
+                stage('Trigger EKS Job') {
+                    steps {
+                        script {
+                            build job: '80-eks',
+                            propagate: false,
+                            wait: false
+                        }
+                    }
+                }
                 // other parallel jobs here...
             }
         }
 
-        // stage('Downstream ALB Job') { ... }
+        
     }  // <-- closes stages
 
     post {
