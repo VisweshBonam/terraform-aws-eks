@@ -76,7 +76,6 @@ pipeline {
                 wait: false // Wait for downstream to complete
             }
         }
-
     }
 
     post {
@@ -91,5 +90,5 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-    
+
 }
