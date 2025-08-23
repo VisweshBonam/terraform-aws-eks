@@ -18,46 +18,40 @@ pipeline {
 
     stages {
         
-         stage('init') { // stage to initialize terraform
+        stage('init') {
             steps {
                 script {
-                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
-                           sh """
-                           
-                           cd 10-sg
-                           terraform init -reconfigure
-
-                           """
+                    withAWS(credentials: 'aws-creds', region: "${REGION}") {
+                        sh """
+                        cd 10-sg
+                        terraform init -reconfigure
+                        """
                     }
                 }
             }
         }
 
-        stage('plan') { // stage to initialize terraform
+        stage('plan') {
             steps {
                 script {
-                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
-                           sh """
-                           
-                           cd 10-sg
-                           terraform plan
-
-                           """
+                    withAWS(credentials: 'aws-creds', region: "${REGION}") {
+                        sh """
+                        cd 10-sg
+                        terraform plan
+                        """
                     }
                 }
             }
         }
 
-        stage('apply') { // stage to initialize terraform
+        stage('apply') {
             steps {
                 script {
-                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
-                           sh """
-                           
-                           cd 10-sg
-                           terraform apply -auto-approve
-
-                           """
+                    withAWS(credentials: 'aws-creds', region: "${REGION}") {
+                        sh """
+                        cd 10-sg
+                        terraform apply -auto-approve
+                        """
                     }
                 }
             }
@@ -65,50 +59,24 @@ pipeline {
 
         stage('Bastion EKS ACM ALB') {
             parallel {
-                 stage('Trigger Bastion Job') {
+                stage('Trigger Bastion Job') {
                     steps {
                         script {
                             build job: '20-bastion',
-                            propagate: false,
-                            propagate: false,
+                            propagate: false
                         }
                     }
-                 }
-                //  stage('Downstream EKS Job') {
-                //     steps {
-                //         script {
-                //             build job: '80-eks',
-                //             propagate: false,
-                //             propagate: false,
-                //         }
-                //     }
-                //  }
-                //   stage('Downstream ACM Job') {
-                //     steps {
-                //         script {
-                //             build job: '60-acm',
-                //             propagate: false,
-                //             propagate: false,
-                //         }
-                //     }
-                //  }
+                }
+                // other parallel jobs here...
             }
         }
 
-        // stage('Downstream ALB Job') { // stage to initialize terraform
-        //     steps {
-        //         script {
-        //             build job: '70-frontend-alb',
-        //             propagate: false,
-        //             propagate: false,
-        //         }
-        //     }
-        // }
+        // stage('Downstream ALB Job') { ... }
+    }  // <-- closes stages
 
     post {
         always {
             echo 'Cleaning up...'
-            // Add any cleanup steps if necessary
         }
         success {
             echo 'Pipeline completed successfully!'
@@ -117,4 +85,4 @@ pipeline {
             echo 'Pipeline failed!'
         }
     }
-}
+}  // <-- closes pipeline
