@@ -63,7 +63,47 @@ pipeline {
             }
         }
 
-    }
+        stage('Bastion EKS ACM ALB') {
+            parallel {
+                 stage('Trigger Bastion Job') {
+                    steps {
+                        script {
+                            build job: '20-bastion',
+                            propagate: false,
+                            propagate: false,
+                        }
+                    }
+                 }
+                //  stage('Downstream EKS Job') {
+                //     steps {
+                //         script {
+                //             build job: '80-eks',
+                //             propagate: false,
+                //             propagate: false,
+                //         }
+                //     }
+                //  }
+                //   stage('Downstream ACM Job') {
+                //     steps {
+                //         script {
+                //             build job: '60-acm',
+                //             propagate: false,
+                //             propagate: false,
+                //         }
+                //     }
+                //  }
+            }
+        }
+
+        // stage('Downstream ALB Job') { // stage to initialize terraform
+        //     steps {
+        //         script {
+        //             build job: '70-frontend-alb',
+        //             propagate: false,
+        //             propagate: false,
+        //         }
+        //     }
+        // }
 
     post {
         always {
