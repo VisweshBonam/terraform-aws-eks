@@ -69,13 +69,13 @@ pipeline {
             }
         }
 
-        stage('Trigger SG Job') {
-            steps {
-                build job: '10-sg',
-                propagate: false, // Don't fail upstream if downstream fails
-                wait: false // Wait for downstream to complete
-            }
-        }
+        // stage('Trigger SG Job') {
+        //     steps {
+        //         build job: '10-sg',
+        //         propagate: false, // Don't fail upstream if downstream fails
+        //         wait: false // Wait for downstream to complete
+        //     }
+        // }
 
 
     }
