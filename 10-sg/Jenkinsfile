@@ -78,11 +78,29 @@ pipeline {
                         }
                     }
                 }
-                // other parallel jobs here...
+
+                stage('Trigger ACM Job') {
+                    steps {
+                        script {
+                            build job: '60-acm',
+                            propagate: false,
+                            wait: false
+                        }
+                    }
+                }
+               
             }
         }
 
-        
+        stage('Trigger ALB Job') {
+            steps {
+                script {
+                    build job: '70-frontend-alb',
+                    propagate: false,
+                     wait: false
+                }
+            }
+        }
     }  // <-- closes stages
 
     post {
