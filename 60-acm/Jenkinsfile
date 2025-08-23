@@ -1,77 +1,82 @@
 pipeline {
-    agent  {
+    agent {
         label 'AGENT-1'
     }
-    environment { 
-        appVersion = ''
-        REGION = "us-east-1"
-        ACC_ID = "315069654700"
-        PROJECT = "roboshop"
-    }
+
     options {
-        timeout(time: 30, unit: 'MINUTES') 
-        disableConcurrentBuilds()
-        ansiColor('xterm')
+        timeout(time:30, unit:'MINUTES') // set a timeout of 30 minutes for the entire pipeline
+        disableConcurrentBuilds() // disable concurrent builds, only one build can run at a time
     }
-    /* parameters {
-        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
-        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
-        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
-        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password') 
-    } */
-    // Build
+
+    environment {
+        appVersion = ''
+        ACC_ID = '057260092371'
+        REGION = 'us-east-1'
+        PROJECT = 'roboshop'
+        COMPONENT = 'cataloguee'
+    }
+
     stages {
-        stage('init') {
+        
+        stage('init') { // stage to initialize terraform
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-                        sh """
-                            cd 60-acm
-                            terraform init -reconfigure
-                        """
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 60-acm
+                           terraform init -reconfigure
+
+                           """
                     }
                 }
             }
         }
 
-        stage('plan') {
+        stage('plan') { // stage to initialize terraform
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-                        sh """
-                            cd 60-acm
-                            terraform plan
-                        """
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 60-acm
+                           terraform plan
+
+                           """
                     }
                 }
             }
         }
-        stage('apply') {
+
+        stage('apply') { // stage to initialize terraform
+           
             steps {
                 script {
-                    withAWS(credentials: 'aws-creds', region: 'us-east-1') {
-                        sh """
-                            cd 60-acm
-                            terraform apply -auto-approve
-                        """
+                     withAWS(credentials: 'aws-creds', region: '${REGION}') {
+                           sh """
+                           
+                           cd 60-acm
+                           terraform apply -auto-approve
+
+                           """
                     }
                 }
             }
         }
-        
+
+       
     }
 
-    post { 
-        always { 
-            echo 'I will always say Hello again!'
-            deleteDir()
+    post {
+        always {
+            echo 'Cleaning up...'
+            // Add any cleanup steps if necessary
         }
-        success { 
-            echo 'Hello Success'
+        success {
+            echo 'Pipeline completed successfully!'
         }
-        failure { 
-            echo 'Hello Failure'
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
