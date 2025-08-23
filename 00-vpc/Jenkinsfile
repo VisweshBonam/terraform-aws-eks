@@ -49,12 +49,6 @@ pipeline {
         }
 
         stage('apply') { // stage to initialize terraform
-            input {
-                message "Should we continue?"
-                ok "Yes, we should."
-                submitter "viswesh,bonam"
-                    
-            }
             steps {
                 script {
                      withAWS(credentials: 'aws-creds', region: '${REGION}') {
